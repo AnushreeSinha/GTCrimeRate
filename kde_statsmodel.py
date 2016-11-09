@@ -19,52 +19,74 @@ class DataMiner:
 	def __init__(self):
 		self.dataset_path = "./test.csv" #"./With-Weight-Georgia_Institute_of_Technology.csv" 
 		self.formated_path = "./transformed.csv"
+		self.buildModel()
 		
 	def buildModel(self):
-#		self._convt_data()
+#		self.convt_data()
 		self.data = self._read_formData()
 #		self._kde_statsm()
 		self._kde_scipy()
 
+#### takes in a time and a bunch of coordinates
+#### datapoints format: [[lats][lngs][hrs]]
+	def getDesity(self,datapoints):
+		return self.kde(datapoints)
+
 	def _kde_scipy(self):
-		print "Transposed data: "
 		self.data = self.data.T
-		print(self.data)
-		#### self.data as formatted below
-		#### [[lat1,.....]
-		####  [lng1,.....] 
-		####  [hr1,......]]
-		kde = stats.gaussian_kde(self.data)
-		density = kde(self.data)
+#		print "Transposed data: "
+#		print(self.data)
+#### self.data as formatted below
+#### [[lat1,.....]
+####  [lng1,.....] 
+####  [hr1,......]]
+		self.kde = stats.gaussian_kde(self.data)
+		density = self.kde(self.data)
 		index = density.argsort()
-		lat, lng, hr, density = self.data[0][index], self.data[1][index], self.data[2][index], density[index]
-		print "lat: "
-		print(lat)
-		print "lng: "
-		print(lng)
-		print "hr: "
-		print(hr)
-		print "density: "
-		print(density)
-		# Evaluate kde on a grid
-#		xmin, ymin, zmin = lat.min(), lng.min(), hr.min()
-#		xmax, ymax, zmax = lat.max(), lng.max(), hr.max()
-#		xi, yi, zi = np.mgrid[xmin:xmax:30j, ymin:ymax:30j, zmin:zmax:30j]
-#		coords = np.vstack([item.ravel() for item in [xi, yi, zi]]) 
-#		density = kde(coords).reshape(xi.shape)
+		spec_hrs = np.full(self.data[0].shape,10)
+		lat, lng, hr, density = self.data[0][index], self.data[1][index], spec_hrs, density[index]
 
-		# Plot scatter with mayavi
+#		print "lat: "
+#		print(lat)
+#		print "lng: "
+#		print(lng)
+#		print "hr: "
+#		print(hr)
+#		print "density: "
+#		print(density)
+
+#		xmin, ymin, zmin = self.data[0].min(), self.data[1].min(), self.data[2].min()
+#		xmax, ymax, zmax = self.data[0].max(), self.data[1].max(), self.data[2].max()
+#		lat, lng, zi = np.mgrid[xmin:xmax:30j, ymin:ymax:30j, zmin:zmax:30j]
+#		hr = np.empty(lat.shape)
+#		for i in range(lat.shape[0]):
+#    			for j in range(lat.shape[1]):
+#        			hr[i,j]=21
+#		coords = np.vstack([item.ravel() for item in [lat, lng, hr]]) #zi]])
+#		density = self.kde(coords).reshape(lat.shape)
+#		print(hr)
+#		print(lat)
+#		print str(hr.shape)+" "+str(lat.shape)
+
 		figure = mlab.figure('DensityPlot')
-
-#		grid = mlab.pipeline.scalar_field(xi, yi, zi, density)
+		
+#		grid = mlab.pipeline.scalar_field(lat, lng, hr, density)#zi, density)
 #		min = density.min()
-#		max=density.max()
+#		max = density.max()
 #		mlab.pipeline.volume(grid, vmin=min, vmax=min + .5*(max-min))
 		
-		#### plot location points at 1:00
-		pts = mlab.points3d(lat, lng, np.ones(hr.shape), density, scale_mode='none', scale_factor=0.07)
+#### plot location points at 13:00
+		pts = mlab.points3d(lat, lng, hr, density, scale_mode='none', scale_factor=0.07)
+		figure.scene.disable_render = True
+		mask = pts.glyph.mask_points
+		mask.maximum_number_of_points = lat.size
+		mask.on_ratio = 1
+		pts.glyph.mask_input_points = True
+		figure.scene.disable_render = False
 		mlab.axes()
 		mlab.show()
+
+#### matplotlib
 #		fig = plt.figure()
 #		fig.suptitle('lat,lng,hr')
 #		plt.subplot(1,2,1)
@@ -89,7 +111,8 @@ class DataMiner:
 #		data.astype(np.float)
 		return data
 
-	def _convt_data(self):
+#### taking out cols of interest and save them to a new file
+	def convt_data(self):
 		orig_file = open(self.dataset_path,"r")
 		#### add a flag indicating whether appending
 		form_file = open(self.formated_path,"w")
@@ -132,5 +155,4 @@ class DataMiner:
 		#return kde.pdf(x_grid)
 		
 dm = DataMiner()
-dm.buildModel()
 
