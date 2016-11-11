@@ -1,8 +1,11 @@
 var map, layer;
+// var $ = jQuery = require('jquery');
+// require('jquery-csv-master/src/jquery.csv.js');
+
 function init(){
     map = new OpenLayers.Map('map', {           
         numZoomLevels: 20,
-        projection: new OpenLayers.Projection("EPSG:4326"),
+        projection: new OpenLayers.Projection("EPSG:900913"),
         displayProjection: new OpenLayers.Projection("EPSG: 4326"),
         controls: [
             new OpenLayers.Control.Attribution(),
@@ -26,10 +29,8 @@ function init(){
     } else {
         map.addControl(new OpenLayers.Control.PanZoom());
     }
-    
     var heatmap = new OpenLayers.Layer.HeatCanvas("Heat Canvas", map, {},
             {'step':0.5, 'degree':HeatCanvas.LINEAR, 'opacity':0.7});
     map.addLayer(heatmap);
 }
-init();
 window.map = map;
