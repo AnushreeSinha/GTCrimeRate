@@ -2,7 +2,7 @@
 A CS8803-Big Data analysis project
 
 ## Python libs setup for running py programs
-- Make sure you install pip first. Necessary py libs so far include: numpy, scipy
+- Make sure you install pip first. Necessary py libs so far include: numpy, scipy, matplotlib
 - http://chrisstrelioff.ws/sandbox/2014/06/04/install_and_setup_python_and_packages_on_ubuntu_14_04.html
 
 ## The algorithm is in kde*.py:
@@ -18,6 +18,9 @@ A CS8803-Big Data analysis project
   * convt_data()
     - converts original to formatted 
   * getDensity()
+  	- return kde output densities
+  	- save output along with datapoints variables
 - TODO:
-  * [ ] evaluate kde outputs and selected bandwidths (currently having scatter and grid plots)
-  * [ ] support passing in new datasets and append the new 3 cols to formatted.csv
+  - [ ] evaluate kde outputs and selected bandwidths (currently having scatter and grid plots)
+  - [ ] support passing in new datasets and append the new datapoints of 3 cols to formatted.csv
+  - [ ] test if the distribution is normal(gaussian)

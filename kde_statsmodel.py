@@ -29,72 +29,59 @@ class DataMiner:
 
 #### takes in a time and a bunch of coordinates
 #### datapoints format: [[lats][lngs][hrs]]
-	def getDesity(self,datapoints):
-		return self.kde(datapoints)
+	def getDensity(self,datapoints):
+		fid = open('kde_out.csv','w')
+		out = self.kde(datapoints)
+		densities = out.T
+		for currentIndex,elem in enumerate(densities):
+		  s1 = '%f %f %f %f\n'%(datapoints[0][currentIndex], datapoints[1][currentIndex], datapoints[2][currentIndex], densities[currentIndex] )
+		  fid.write(s1)
+		fid.close()
+		return out
 
 	def _kde_scipy(self):
 		self.data = self.data.T
-#		print "Transposed data: "
-#		print(self.data)
+#### plot input data points
+#		fig0, ax0 = plt.subplots(subplot_kw=dict(projection='3d'))
+#		x,y,z = self.data[0], self.data[1], self.data[2]
+#		ax0.scatter(x,y,z)
+#		plt.show()
+
 #### self.data as formatted below
 #### [[lat1,.....]
 ####  [lng1,.....] 
 ####  [hr1,......]]
 		self.kde = stats.gaussian_kde(self.data)
-		density = self.kde(self.data)
-		index = density.argsort()
-		spec_hrs = np.full(self.data[0].shape,10)
-		lat, lng, hr, density = self.data[0][index], self.data[1][index], spec_hrs, density[index]
-
-#		print "lat: "
-#		print(lat)
-#		print "lng: "
-#		print(lng)
-#		print "hr: "
-#		print(hr)
-#		print "density: "
-#		print(density)
-
-#		xmin, ymin, zmin = self.data[0].min(), self.data[1].min(), self.data[2].min()
-#		xmax, ymax, zmax = self.data[0].max(), self.data[1].max(), self.data[2].max()
-#		lat, lng, zi = np.mgrid[xmin:xmax:30j, ymin:ymax:30j, zmin:zmax:30j]
-#		hr = np.empty(lat.shape)
-#		for i in range(lat.shape[0]):
-#    			for j in range(lat.shape[1]):
-#        			hr[i,j]=21
-#		coords = np.vstack([item.ravel() for item in [lat, lng, hr]]) #zi]])
-#		density = self.kde(coords).reshape(lat.shape)
-#		print(hr)
-#		print(lat)
-#		print str(hr.shape)+" "+str(lat.shape)
-
-		figure = mlab.figure('DensityPlot')
 		
+#		density = self.kde(self.data)
+#		index = density.argsort()
+#		spec_hrs = np.full(self.data[0].shape,16)
+#		lat, lng, hr, density = self.data[0][index], self.data[1][index], spec_hrs, density[index] # mapping of input data points
+#		hr = self.data[2][index] #at all hours
+		
+#### matplotlib to plot all data points with density coloring
+#		fig, (ax2) = plt.subplots(1,1,subplot_kw=dict(projection='3d'))
+##		ax1.scatter(lat, lng, hr)#, c=density)
+#		ax2.scatter(lat, lng, hr, c=density)
+#		plt.show()
+
+#### mayavi plotting
+#		figure = mlab.figure('DensityPlot')
 #		grid = mlab.pipeline.scalar_field(lat, lng, hr, density)#zi, density)
 #		min = density.min()
 #		max = density.max()
 #		mlab.pipeline.volume(grid, vmin=min, vmax=min + .5*(max-min))
 		
-#### plot location points at 13:00
-		pts = mlab.points3d(lat, lng, hr, density, scale_mode='none', scale_factor=0.07)
-		figure.scene.disable_render = True
-		mask = pts.glyph.mask_points
-		mask.maximum_number_of_points = lat.size
-		mask.on_ratio = 1
-		pts.glyph.mask_input_points = True
-		figure.scene.disable_render = False
-		mlab.axes()
-		mlab.show()
-
-#### matplotlib
-#		fig = plt.figure()
-#		fig.suptitle('lat,lng,hr')
-#		plt.subplot(1,2,1)
-#		ax = Axes3D(fig)
-#		cset = ax.contour(lat, lng, hr, 16, extend3d=True)
-#		ax.clabel(cset, fontsize=9, inline=1)
-#		ax.scatter(x, y, z, c=density)
-#		plt.show()
+#### plot location points at a specific time
+#		pts = mlab.points3d(lat, lng, hr, density, scale_mode='none', scale_factor=0.07)
+#		figure.scene.disable_render = True
+#		mask = pts.glyph.mask_points
+#		mask.maximum_number_of_points = lat.size
+#		mask.on_ratio = 1
+#		pts.glyph.mask_input_points = True
+#		figure.scene.disable_render = False
+#		mlab.axes()
+#		mlab.show()
 
 	def _read_formData(self):
 		form_file = open(self.formated_path,"r")
@@ -111,6 +98,7 @@ class DataMiner:
 #		data.astype(np.float)
 		return data
 
+
 #### taking out cols of interest and save them to a new file
 	def convt_data(self):
 		orig_file = open(self.dataset_path,"r")
@@ -118,9 +106,6 @@ class DataMiner:
 		form_file = open(self.formated_path,"w")
 		record = orig_file.readline()
 		record = orig_file.readline()	
-#		print("here: "+record)	
-#		cnt = 0
-#		data = np.loadtxt(file, delimiter=',', usecols=(DataInfo.COL_LAT, DataInfo.COL_LONG, DataInfo.COL_HR))
 		while(record!=""):
 			attrs = record.split("\t")
 			ndarr = ""
@@ -135,12 +120,6 @@ class DataMiner:
 			if(ndarr!=[]):
 				form_file.write(ndarr[:-1]+"\n")
 			record = orig_file.readline()
-#			ndarr.append((int)attrs[DataInfo.COL_LAT])
-#			ndarr.appesnd((int)attrs[DataInfo.COL_LONG])
-#			ndarr.append((int)attrs[DataInfo.COL_HR])
-#			ndarr = np.loadtxt(record, delimiter=',', usecols=(DataInfo.COL_LAT, DataInfo.COL_LONG, DataInfo.COL_HR))
-#			np.vstack((data,ndarr))
-#			cnt = cnt+1
 		orig_file.close()
 		form_file.close()
 
@@ -155,4 +134,25 @@ class DataMiner:
 		#return kde.pdf(x_grid)
 		
 dm = DataMiner()
+#### grid set up, may exclude outliers
+#### plot on one plane of the hour
+xmin, ymin, zmin = 33.7514, -84.4234, 10#self.data[0].min(), self.data[1].min(), 10#self.data[2].min()
+xmax, ymax, zmax = 33.7972, -84.3708, 11#self.data[0].max(), self.data[1].max(), 11#self.data[2].max()
+lat, lng = np.mgrid[xmin:xmax:100j, ymin:ymax:100j]
+#		hr = np.mgrid[zmin:zmax:40j]
+hr = np.empty(lat.shape) ##set hr to a specific hour
+for i in range(lat.shape[0]):
+		for j in range(lat.shape[1]):
+			hr[i,j]=20
+coords = np.vstack([item.ravel() for item in [lat, lng, hr]]) 
+density = dm.getDensity(coords).reshape(lat.shape)
+fig3, ax3 = plt.subplots()
+ax3.imshow(np.rot90(density), cmap=plt.cm.gist_earth_r,extent=[xmin, xmax, ymin, ymax])
+ax3.plot(dm.data[0], dm.data[1], 'k.', markersize=2)
+ax3.set_xlim([xmin, xmax])
+ax3.set_ylim([ymin, ymax])
+plt.show()
+#		mlab.contour3d(lat, lng, hr, density, opacity=0.5)
+#		mlab.axes()
+#		mlab.show()
 
