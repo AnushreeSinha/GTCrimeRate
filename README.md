@@ -26,6 +26,7 @@ A CS8803-Big Data analysis project
   * CustBdwdKDE(dataset,bandwidth)
   	- A Customized class inheriting stats.gaussian_kde to set fixed bandwidth for overwriting scipy's default covariance determination
 - TODO:
-  - [ ] evaluate kde outputs and find good bandwidths/normalize data (currently having scatter and grid plots)
-  - [ ] support passing in new datasets and append the new datapoints of 3 cols to formatted.csv
-  - [ ] test if the distribution is normal(gaussian)
+  - [ ] **Evaluate kde outputs and find good bandwidths/normalize data (currently having scatter and grid plots)**
+  - [ ] Support passing in new datasets and append the new datapoints of 3 cols to formatted.csv
+  - [ ] Test if the distribution is normal(gaussian)
+  - [ ] **Compare UI map density distributions to other existing solutions**
