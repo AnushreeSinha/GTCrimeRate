@@ -2,7 +2,6 @@
 from statsmodels.nonparametric.kernel_density import KDEMultivariate
 import numpy as np,numpy
 from scipy import stats
-#from statsmodels.distributions.mixture_rvs import mixture_rvs
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 #from mayavi import mlab
@@ -20,14 +19,13 @@ class DataMiner:
 	xmax, ymax = 33.786683, -84.391138#33.7972, -84.3708
 
 	def __init__(self):
-		self.dataset_path = "./test.csv" #"./With-Weight-Georgia_Institute_of_Technology.csv" 
+		self.dataset_path = "./dataset.csv" #"./With-Weight-Georgia_Institute_of_Technology.csv" 
 		self.formated_path = "./transformed.csv"
 		self.buildModel()
 		
 	def buildModel(self):
 #		self.convt_data()
 		self.data = self._read_formData()
-#		self._kde_statsm()
 		self._kde_scipy()
 		
 #### a method to look for the right bandwidth for each dimension
@@ -164,27 +162,21 @@ class DataMiner:
 			ndarr = ""
 			for ind in self.DATAINFO:
 				colstr = attrs[ind]
+				if ind!=self.DATAINFO[2]:
+					if colstr=="0":
+						ndarr = []
+						break
 				if(colstr==""):
 					ndarr = []
 					break
 				else:
 					ndarr = ndarr+(colstr)+","
-			print(ndarr)
+			#print(ndarr)
 			if(ndarr!=[]):
 				form_file.write(ndarr[:-1]+"\n")
 			record = orig_file.readline()
 		orig_file.close()
 		form_file.close()
-
-	def _kde_statsm(self, bandwidth=0.2, **kwargs):
-		kde = KDEMultivariate(self.data, bw=bandwidth,
-		                      var_type='c', **kwargs)
-		#kde.fit()
-		#fig = plt.figure(figsize=(12,8))
-		#ax = fig.add_subplot(111)
-		#ax.hist(self.data, bins=10, normed=True, color='red')
-		#ax.plot(kde.support, kde.density, lw=2, color='black');
-		#return kde.pdf(x_grid)
 
 """A Customized class inheriting stats.gaussian_kde to set fixed bandwidth for overwriting scipy's default covariance determination"""
 class CustBdwdKDE(stats.gaussian_kde):
@@ -210,7 +202,7 @@ class CustBdwdKDE(stats.gaussian_kde):
         self._norm_factor = numpy.sqrt(numpy.linalg.det(2*numpy.pi*self.covariance)) * self.n
 		
 dm = DataMiner()
-dm.selectBdwd()
+#dm.selectBdwd()
 #### grid set up, may exclude outliers
 #### plot on one plane of the hour
 xmin, ymin, zmin = 33.7514, -84.4234, 10#self.data[0].min(), self.data[1].min(), 10#self.data[2].min()
