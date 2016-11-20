@@ -48,7 +48,6 @@ class DataMiner:
 		ax.legend(loc='upper left')
 		plt.axis([x.min(), x.max(), xpdf.min(), xpdf.max()])
 		ax.set_xlim(self.xmin, self.xmax)
-		plt.show()
 		
 		y_grid = np.linspace(y.min(), y.max(), 10000)
 		fig1, ax1 = plt.subplots()
@@ -198,7 +197,7 @@ class CustBdwdKDE(stats.gaussian_kde):
         self._norm_factor = np.sqrt(numpy.linalg.det(2*numpy.pi*self.covariance)) * self.n
 		
 dm = DataMiner()
-#dm.selectBdwd()
+dm.selectBdwd()
 '''plot points and grid densities at a specified hour'''
 xmin, ymin = 33.7514, -84.4234#dm.data[0].min(), dm.data[1].min(), 10#
 xmax, ymax = 33.7972, -84.3708#dm.data[0].max(), dm.data[1].max(), 11#
