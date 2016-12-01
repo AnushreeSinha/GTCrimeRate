@@ -28,3 +28,22 @@ A CS8803-Big Data analysis project
   - [ ] Support passing in new datasets and append the new datapoints of 3 cols to formatted.csv
   - [ ] Test if the distribution is normal(gaussian)
   - [ ] **Compare UI map density distributions to other existing solutions**
+  
+## The Server:
+Files related to it:
+  * server.py
+    - should be run in order to start the server.
+  * wrapper.py 
+    - interpolates the points and calls KDE. 
+
+API Calls:
+  * GET call for entire GT Campus 
+    - URL: 0.0.0.0:8080/ 
+    - Corresponding class in server.py: class index
+    - Corresponding function in wrapper.py: def callKDEOne(self):
+  * wrapper.py 
+    - http://0.0.0.0:8080/getscore?baselon=-84.409860&baselat=33.773249&toplon=-84.391138&toplat=33.786683
+    - Corresponding class in server.py: class getscore:
+    - Corresponding function in wrapper.py:  def callKDETwo(self, baselon, baselat, toplon, toplat):
+- TODO:
+  - [x] **Create a POST call to add new data to the csv so that the model learns dynamically**
