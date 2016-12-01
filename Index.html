@@ -18,8 +18,28 @@
 
        
     </head>
-
+    <h3> Map </h3>
+    <div id="Map" class="tabcontent">
     <body onload="init();">
-        <div id="map" style="width:850px; height:500px;"></div>
+        <div id="map" style="width:1050px; height:500px;"></div>
     </body>
+
+    <h3> Report a Crime </h3>
+    <form>
+    Crime Type:<br>
+    <select name="type">
+        <option value="Assault">Assault</option>
+        <option value="Breaking">Breaking and Entering</option>
+        <option value="Disorder">Disorder</option>
+        <option value="Property Crime">Property Crime</option>
+        <option value="Robbery">Robbery</option>
+        <option value="Sexual Assault">Sexual Assault</option>
+        <option value="Theft">Theft</option>
+        <option value="Weapons Offense">Weapons Offense</option>
+    </select>
+    Time happened:
+    <input type="time" name="usr_time">
+    <input type="submit" value="Submit">
+    </form>
+    
 </html>
