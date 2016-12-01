@@ -1,9 +1,8 @@
 #!/usr/bin/python
-from statsmodels.nonparametric.kernel_density import KDEMultivariate
 import numpy as np,numpy
 from scipy import stats
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+'''import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D'''
 #from mayavi import mlab
 
 class DataInfo:
@@ -115,13 +114,21 @@ class DataMiner:
 
 #### mayavi plotting
 #		figure = mlab.figure('DensityPlot')
-#		grid = mlab.pipeline.scalar_field(lat, lng, hr, density)#zi, density)
+#		xmin, ymin, zmin = 33.7514, -84.4234, self.data[2].min()
+#		xmax, ymax, zmax = 33.7972, -84.3708, self.data[2].max()
+#		lat, lng, hr = np.mgrid[xmin:xmax:30j, ymin:ymax:30j, zmin:zmax:30j]
+#		coords = np.vstack([item.ravel() for item in [lat, lng, hr]]) 
+#		density = self.kde(coords).reshape(lat.shape)
+#		grid = mlab.pipeline.scalar_field(lat, lng, hr, density)
 #		min = density.min()
 #		max = density.max()
 #		mlab.pipeline.volume(grid, vmin=min, vmax=min + .5*(max-min))
+#		mlab.contour3d(lat, lng, hr, density, opacity=0.5)
 		
 #### plot location points at a specific time
-#		pts = mlab.points3d(lat, lng, hr, density, scale_mode='none', scale_factor=0.07)
+#		lat, lng, hr = self.data[0], self.data[1], self.data[2]
+#		density = self.kde(self.data)
+#		pts = mlab.points3d(lat, lng, hr, density, scale_mode='none',scale_factor=0.07)
 #		figure.scene.disable_render = True
 #		mask = pts.glyph.mask_points
 #		mask.maximum_number_of_points = lat.size
@@ -197,29 +204,42 @@ class CustBdwdKDE(stats.gaussian_kde):
         self._norm_factor = np.sqrt(numpy.linalg.det(2*numpy.pi*self.covariance)) * self.n
 		
 dm = DataMiner()
-dm.selectBdwd()
+#dm.selectBdwd()
 '''plot points and grid densities at a specified hour'''
-xmin, ymin = 33.7514, -84.4234#dm.data[0].min(), dm.data[1].min(), 10#
+
+'''xmin, ymin = 33.7514, -84.4234#dm.data[0].min(), dm.data[1].min(), 10#
 xmax, ymax = 33.7972, -84.3708#dm.data[0].max(), dm.data[1].max(), 11#
 lat, lng = np.mgrid[xmin:xmax:100j, ymin:ymax:100j]
-speci_hr = 20 ## show data at a specific time
-hr = np.empty(lat.shape) ##set hr to a specific hour
-for i in range(lat.shape[0]):
-		for j in range(lat.shape[1]):
-			hr[i,j]=speci_hr
-hr = np.full(lat.shape,speci_hr)
-coords = np.vstack([item.ravel() for item in [lat, lng, hr]]) 
+speci_hr = 14 ## show data at a specific time
+hr = np.full(lat.shape,speci_hr)'''
+
+'''plot at a specific longitude'''
+
+#speci_lng = -84.4068
+#lng = np.empty(lat.shape)
+#lng = np.full(lat.shape,speci_lng)
+#lat, hr = np.mgrid[xmin:xmax:100j, 0:24:100j]
+
+'''plot at a specified hour'''
+
+'''coords = np.vstack([item.ravel() for item in [lat, lng, hr]]) 
 density = dm.getDensity(coords).reshape(lat.shape)
 fig3, ax3 = plt.subplots()
 ax3.imshow(np.rot90(density), cmap=plt.cm.gist_earth_r,extent=[xmin, xmax, ymin, ymax])
 ax3.plot(dm.data[0][dm.data[2,:]==speci_hr], dm.data[1][dm.data[2,:]==speci_hr], 'k.', markersize=2,label='hr={0}'.format(speci_hr))
 #ax3.set_xlim([33.739, 33.8])
 #ax3.set_ylim([-84.43, -84.36])
-ax3.set_xlim([dm.xmin, dm.xmax])
-ax3.set_ylim([dm.ymin, dm.ymax])
+ax3.set_xlim([xmin, xmax])
+ax3.set_ylim([ymin, ymax])
+
+#ax3.imshow(np.rot90(density), cmap=plt.cm.gist_earth_r,extent=[xmin, xmax, 0, 24])
+#ax3.plot(dm.data[0][dm.data[1,:]==speci_lng], dm.data[2][dm.data[1,:]==speci_lng], 'k.', markersize=2,label='lng={0}'.format(speci_lng))
+#ax3.set_xlim([dm.xmin, dm.xmax])
+#ax3.set_ylim([16, 16.5])
+
 ax3.legend(loc='upper left')
 plt.show()
 #		mlab.contour3d(lat, lng, hr, density, opacity=0.5)
 #		mlab.axes()
 #		mlab.show()
-
+'''

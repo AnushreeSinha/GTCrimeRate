@@ -35,10 +35,10 @@ class Wrapper:
     
     def callKDEOne(self):
         dataMiner = DataMiner()
-        baselon = -84.409860
+        baselon = -84.40986
         baselat = 33.773249
-        toplon = -84.391138
-        toplat = 33.786683
+        toplon = -84.224512
+        toplat = 33.906246
         lats = list();
         longs = list();
         hrs = list();
